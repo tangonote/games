@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<meta charset="UTF-8">
+<title>英語タワー（やさい編）</title>
+
+<h2>英語タワー（やさい編）</h2>
+
+<pre id="tower"></pre>
+<p id="floor"></p>
+<p id="question"></p>
+
+<div id="choices">
+  <button class="choice" onclick="answer(0)">eggplant</button>
+  <button class="choice" onclick="answer(1)">cucumber</button>
+  <button class="choice" onclick="answer(2)">turnip</button>
+  <button class="choice" onclick="answer(3)">carrot</button>
+  <button class="choice" onclick="answer(4)">pumpkin</button>
+  <button class="choice" onclick="answer(5)">potato</button>
+  <button class="choice" onclick="answer(6)">corn</button>
+</div>
+
+<button onclick="resetGame()">🔄 リセット</button>
+
+<style>
+  .choice {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .choice.correct {
+    background-color: #8bc34a;
+  }
+
+  .choice.wrong {
+    background-color: #f44336;
+  }
+</style>
+
+<script>
+  const questions = [
+    { q: "「とうもろこし」はどれ？", a: 6 },
+    { q: "「きゅうり」はどれ？", a: 1 },
+    { q: "「じゃがいも」はどれ？", a: 5 },
+    { q: "「かぼちゃ」はどれ？", a: 4 },
+    { q: "「にんじん」はどれ？", a: 3 }
+  ];
+
+  const MAX_FLOOR = 10;
+  let floor, current;
+
+  function drawTower() {
+    let t = "";
+    for (let i = MAX_FLOOR; i >= 1; i--) {
+      t += (i === floor ? "■" : "□") + "\n";
+    }
+    document.getElementById("tower").textContent = t;
+  }
+
+  function show() {
+    drawTower();
+    document.getElementById("floor").textContent = "いま：" + floor + "階";
+    document.getElementById("question").textContent =
+      questions[current].q;
+  }
+
+  function answer(n) {
+    const buttons = document.querySelectorAll(".choice");
+    buttons.forEach(b => b.classList.remove("correct", "wrong"));
+
+    if (n === questions[current].a) {
+      buttons[n].classList.add("correct");
+
+      // ★ すでに10階なら、ここがゴール
+      if (floor === MAX_FLOOR) {
+        document.getElementById("question").textContent =
+          "🎉 10階クリア！おめでとう！";
+        document.getElementById("choices").style.display = "none";
+        return;
+      }
+
+      // まだゴールでなければ階を上げる
+      floor++;
+      current = (current + 1) % questions.length;
+    } else {
+      buttons[n].classList.add("wrong");
+    }
+
+    setTimeout(show, 500);
+  }
+
+  function resetGame() {
+    floor = 1;
+    current = 0;
+    document.getElementById("choices").style.display = "block";
+
+    const buttons = document.querySelectorAll(".choice");
+    buttons.forEach(b => b.classList.remove("correct", "wrong"));
+
+    show();
+  }
+
+  resetGame();
+</script>
+
+</html>
